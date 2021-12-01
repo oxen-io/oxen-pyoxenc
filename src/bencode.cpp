@@ -6,87 +6,63 @@
 #include <stdexcept>
 
 namespace pybind11::detail {
-    template<> struct type_caster<oxenc::bt_value> {
-    public:
-        PYBIND11_TYPE_CASTER(oxenc::bt_value, _("bencode_value"));
 
-        // void pointer because we need type erasure to avoid instantiating pybind's
-        // variant_caster<bt_variant> until we have instantiated this class, because we are one of the
-        // variants that variant_caster internally instantiates.
-        std::shared_ptr<void> var_caster;
+// Pybind type caster for bt_value that lets us load a bt_value from arbitrary Python data and vice
+// versa; the caller provides whatever data and pybind takes care of all of the loading into the
+// variant (or fails it something is provided anywhere in the data that can't be stuffed into a
+// bt_value).
+template<> struct type_caster<oxenc::bt_value> {
+  public:
+    PYBIND11_TYPE_CASTER(oxenc::bt_value, _("bencode_value"));
 
-        bool load(handle src, bool conv);
-        static handle cast(oxenc::bt_value src, return_value_policy policy, handle parent);
-    };
+    // void pointer because we need type erasure to avoid instantiating pybind's
+    // variant_caster<bt_variant> until we have instantiated this class (because variant_caster
+    // instantiates casters of each variant type, and we are one of those types).
+    std::shared_ptr<void> var_caster;
 
-    using var_caster_t = variant_caster<oxenc::bt_variant>;
-    bool type_caster<oxenc::bt_value>::load(handle src, bool conv) {
-        if (!var_caster)
-            var_caster = std::make_shared<var_caster_t>();
-        auto* vc = static_cast<var_caster_t*>(var_caster.get());
+    bool load(handle src, bool conv);
+    static handle cast(oxenc::bt_value src, return_value_policy policy, handle parent);
+};
 
-        if (!vc->load(src, conv))
-            return false;
-        value = std::move(*vc).operator oxenc::bt_variant&&();
-        return true;
-    }
+// Attempts to load a bt_value from a Python parameter:
+using var_caster_t = variant_caster<oxenc::bt_variant>;
+bool type_caster<oxenc::bt_value>::load(handle src, bool conv) {
+    if (!var_caster)
+        var_caster = std::make_shared<var_caster_t>();
+    auto* vc = static_cast<var_caster_t*>(var_caster.get());
 
-    handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value, return_value_policy, handle) {
-        throw std::logic_error{"Python casting of bt_value not supported"};
-    }
+    if (!vc->load(src, conv))
+        return false;
+    value = std::move(*vc).operator oxenc::bt_variant&&();
+    return true;
 }
+
+handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_policy rvp, handle parent) {
+    if (auto* str = std::get_if<std::string>(&val))
+        return py::bytes{*str}.release();
+    if (auto* sv = std::get_if<std::string_view>(&val))
+        return py::bytes{sv->data(), sv->size()}.release();
+    if (auto* u64 = std::get_if<uint64_t>(&val))
+        return py::int_{*u64}.release();
+    if (auto* list = std::get_if<oxenc::bt_list>(&val)) {
+        py::list l;
+        for (auto& item : *list)
+            l.append(cast(std::move(item), rvp, parent));
+        return l.release();
+    }
+    if (auto* dict = std::get_if<oxenc::bt_dict>(&val)) {
+        py::dict d;
+        for (auto& [key, value] : *dict)
+            d[py::bytes{key}] = cast(std::move(value), rvp, parent);
+        return d.release();
+    }
+    return py::none{}.release();
+}
+
+} // namespace pybind11::detail
+
 
 namespace oxenc {
-
-void build_list(py::list& l, bt_list_consumer c);
-
-void build_dict(py::dict& d, bt_dict_consumer c) {
-    while (!c.is_finished()) {
-        auto key_sv = c.key();
-        py::bytes key{key_sv.data(), key_sv.size()};
-        if (c.is_string()) {
-            auto s = c.consume_string_view();
-            d[key] = py::bytes{s.data(), s.size()};
-        } else if (c.is_negative_integer())
-            d[key] = py::int_{c.consume_integer<int64_t>()};
-        else if (c.is_integer())
-            d[key] = py::int_{c.consume_integer<uint64_t>()};
-        else if (c.is_dict()) {
-            py::dict subdict{};
-            d[key] = subdict;
-            build_dict(subdict, c.consume_dict_consumer());
-        } else if (c.is_list()) {
-            py::list sublist{};
-            d[key] = sublist;
-            build_list(sublist, c.consume_list_consumer());
-        } else {
-            throw std::invalid_argument{"Invalid encoding inside dict"};
-        }
-    }
-}
-
-void build_list(py::list& l, bt_list_consumer c) {
-    while (!c.is_finished()) {
-        if (c.is_string()) {
-            auto s = c.consume_string_view();
-            l.append(py::bytes{s.data(), s.size()});
-        } else if (c.is_negative_integer())
-            l.append(py::int_{c.consume_integer<int64_t>()});
-        else if (c.is_integer())
-            l.append(py::int_{c.consume_integer<uint64_t>()});
-        else if (c.is_dict()) {
-            py::dict subdict{};
-            l.append(subdict);
-            build_dict(subdict, c.consume_dict_consumer());
-        } else if (c.is_list()) {
-            py::list sublist{};
-            l.append(sublist);
-            build_list(sublist, c.consume_list_consumer());
-        } else {
-            throw std::invalid_argument{"Invalid encoding inside list"};
-        }
-    }
-}
 
 void BEncode_Init(py::module& m) {
     using namespace pybind11::literals;
@@ -95,46 +71,24 @@ void BEncode_Init(py::module& m) {
             "val"_a,
             "Returns the bencode value of the given value.  The bt_value val can be given as a "
             "bytes, str, int, list of bt_values, or dict of bytes/str -> bt_value pairs.  Note "
-            "that str values will be encoded as utf-8 and will be *decoded* by bt_deserialize as "
+            "that str values will be encoded as utf-8 but will be *decoded* by bt_deserialize as "
             "as bytes.");
 
-    m.def("bt_deserialize", [](py::bytes val) -> py::object {
-        char* buffer;
-        ssize_t len;
-        if (PYBIND11_BYTES_AS_STRING_AND_SIZE(val.ptr(), &buffer, &len))
-            throw std::runtime_error{"Unable to extract bytes contents!"};
-        std::string_view data{buffer, static_cast<size_t>(len)};
-        if (data.empty()) return py::none{};
-
-        if (data[0] == 'i') {
-            try {
-                return py::int_{bt_deserialize<uint64_t>(data)};
-            } catch (...) {
-                return py::int_{bt_deserialize<int64_t>(data)};
-            }
-        }
-        if (data[0] >= '0' && data[0] <= '9') {
-            auto str = bt_deserialize<std::string_view>(data);
-            return py::bytes{str.data(), str.size()};
-        }
-        if (data[0] == 'd') {
-            py::dict d;
-            build_dict(d, bt_dict_consumer{data});
-            return d;
-        }
-        if (data[0] == 'l') {
-            py::list l;
-            build_list(l, bt_list_consumer{data});
-            return l;
-        }
-        throw std::invalid_argument{"The given value is not a valid bencoded value"};
-    },
-    "val"_a,
-    "Deserializes a bencoded value.  Deserialization produces a value of: `int`, `bytes`, `list`, "
-    "or `dict`; lists contain 0 or more of these values (recursively), and dicts contain bytes "
-    "keys each containing one of these values (again recursive).  Note that you always get "
-    "`bytes` out, not `str`s: it is up to the caller to decide how to interpret these values."
+    m.def("bt_deserialize", [](py::bytes val) {
+            char* buffer;
+            ssize_t len;
+            if (PYBIND11_BYTES_AS_STRING_AND_SIZE(val.ptr(), &buffer, &len))
+                throw std::runtime_error{"Unable to extract bytes contents!"};
+            std::string_view data{buffer, static_cast<size_t>(len)};
+            if (data.empty()) throw std::invalid_argument{"empty byte string is not a valid bencoded value"};
+            return bt_deserialize<bt_value>(data);
+        },
+        "val"_a,
+        "Deserializes a bencoded value.  Deserialization produces a value of: `int`, `bytes`, `list`, "
+        "or `dict`; lists contain 0 or more of these values (recursively), and dicts contain bytes "
+        "keys each containing one of these values (again recursive).  Note that you always get "
+        "`bytes` out, not `str`s: it is up to the caller to decide how to interpret these values."
     );
 }
 
-}
+} // namespace oxenc

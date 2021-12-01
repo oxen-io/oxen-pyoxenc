@@ -1,0 +1,21 @@
+Source: oxen-pyoxenc
+Priority: optional
+Maintainer: Jason Rhinelander <jason@oxen.io>
+Build-Depends:
+    debhelper-compat (= 11),
+    liboxenc-dev,
+    pybind11-dev,
+    python3-pybind11,
+    python3-setuptools,
+    python3-all-dev,
+    dh-python
+Standards-Version: 4.4.1
+Section: python
+Homepage: https://github.com/oxen-io/oxen-pyoxenc
+
+Package: python3-oxenc
+Architecture: any
+Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
+Description: Oxen project encoding tools (Python wrapper)
+ This is the Python wrapper around liboxenc, providing fast bittorrent,
+ base32z, and base64 encoding from Python.

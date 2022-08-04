@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.1-1~deb10) buster; urgency=medium
+
+  * Add LGPL license
+  * Make bt_deserialize take a buffer instead of bytes
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 04 Aug 2022 14:31:44 -0300
+
 oxen-pyoxenc (1.0.0-1~deb10) buster; urgency=medium
 
   * Initial release.

@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.1-1) sid; urgency=medium
+
+  * Add LGPL license
+  * Make bt_deserialize take a buffer instead of bytes
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 04 Aug 2022 14:31:38 -0300
+
 oxen-pyoxenc (1.0.0-1) sid; urgency=medium
 
   * Initial release.

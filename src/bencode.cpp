@@ -61,6 +61,14 @@ handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_poli
 
 } // namespace pybind11::detail
 
+namespace {
+
+void delete_buffer(Py_buffer* b) {
+    PyBuffer_Release(b);
+    delete b;
+}
+
+}
 
 namespace oxenc {
 
@@ -74,20 +82,23 @@ void BEncode_Init(py::module& m) {
             "that str values will be encoded as utf-8 but will be *decoded* by bt_deserialize as "
             "as bytes.");
 
-    m.def("bt_deserialize", [](py::bytes val) {
-            char* buffer;
-            ssize_t len;
-            if (PYBIND11_BYTES_AS_STRING_AND_SIZE(val.ptr(), &buffer, &len))
-                throw std::runtime_error{"Unable to extract bytes contents!"};
-            std::string_view data{buffer, static_cast<size_t>(len)};
+    m.def("bt_deserialize", [](py::buffer val) {
+            auto* b = new Py_buffer();
+            if (PyObject_GetBuffer(val.ptr(), b, PyBUF_SIMPLE) != 0) {
+                delete b;
+                throw py::error_already_set();
+            }
+            std::unique_ptr<Py_buffer, decltype(&delete_buffer)> buf{b, &delete_buffer};
+            std::string_view data{static_cast<const char*>(buf->buf), static_cast<size_t>(buf->len)};
             if (data.empty()) throw std::invalid_argument{"empty byte string is not a valid bencoded value"};
             return bt_deserialize<bt_value>(data);
         },
         "val"_a,
-        "Deserializes a bencoded value.  Deserialization produces a value of: `int`, `bytes`, `list`, "
-        "or `dict`; lists contain 0 or more of these values (recursively), and dicts contain bytes "
-        "keys each containing one of these values (again recursive).  Note that you always get "
-        "`bytes` out, not `str`s: it is up to the caller to decide how to interpret these values."
+        "Deserializes a bencoded value from a buffer-supporting value (such as a bytes or "
+        "memoryview).  Deserialization produces a value of: `int`, `bytes`, `list`, or `dict`; "
+        "lists contain 0 or more of these values (recursively), and dicts contain bytes keys each "
+        "containing one of these values (again recursive).  Note that you always get `bytes` out, "
+        "not `str`s: it is up to the caller to decide how to interpret these values."
     );
 }
 

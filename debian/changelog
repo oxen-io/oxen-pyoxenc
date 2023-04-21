@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.1-1~ubuntu2304) lunar; urgency=medium
+
+  * rebuild for lunar
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Fri, 21 Apr 2023 18:25:55 -0300
+
 oxen-pyoxenc (1.0.1-1~ubuntu2210) kinetic; urgency=medium
 
   * Add LGPL license

@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.3-1~deb10) buster; urgency=medium
+
+  * Fix from_base32z/64 trying to return a str
+  * Fix memory leak in bt_deserialize
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Wed, 27 Sep 2023 18:42:56 -0300
+
 oxen-pyoxenc (1.0.1-1~deb10) buster; urgency=medium
 
   * Add LGPL license

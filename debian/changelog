@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.3-1~deb12) bookworm; urgency=medium
+
+  * Fix from_base32z/64 trying to return a str
+  * Fix memory leak in bt_deserialize
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Wed, 27 Sep 2023 18:42:53 -0300
+
 oxen-pyoxenc (1.0.1-1~deb12+1) bookworm; urgency=medium
 
   * Bookworm rebuild for python3.11

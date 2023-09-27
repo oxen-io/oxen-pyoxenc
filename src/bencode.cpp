@@ -37,7 +37,7 @@ bool type_caster<oxenc::bt_value>::load(handle src, bool conv) {
     return true;
 }
 
-handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_policy rvp, handle parent) {
+handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_policy rvp, handle /*parent*/) {
     if (auto* str = std::get_if<std::string>(&val))
         return py::bytes{*str}.release();
     if (auto* sv = std::get_if<std::string_view>(&val))
@@ -47,13 +47,13 @@ handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_poli
     if (auto* list = std::get_if<oxenc::bt_list>(&val)) {
         py::list l;
         for (auto& item : *list)
-            l.append(cast(std::move(item), rvp, parent));
+            l.append(std::move(item));
         return l.release();
     }
     if (auto* dict = std::get_if<oxenc::bt_dict>(&val)) {
         py::dict d;
         for (auto& [key, value] : *dict)
-            d[py::bytes{key}] = cast(std::move(value), rvp, parent);
+            d[py::bytes{key}] = std::move(value);
         return d.release();
     }
     return py::none{}.release();

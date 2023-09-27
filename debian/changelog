@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.3-1) sid; urgency=medium
+
+  * Fix from_base32z/64 trying to return a str
+  * Fix memory leak in bt_deserialize
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Wed, 27 Sep 2023 18:42:41 -0300
+
 oxen-pyoxenc (1.0.1-1+1) sid; urgency=medium
 
   * sid rebuild for python 3.11

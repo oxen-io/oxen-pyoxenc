@@ -35,7 +35,7 @@ Bases_Init(py::module& m)
             if (check && !is_base32z(b32z))
                 throw std::invalid_argument{"Value is not base32z encoded"};
 
-            return from_base32z(b32z);
+            return py::bytes{from_base32z(b32z)};
         },
         "b32z"_a, "check"_a = true,
         "Decodes a base32z-encoded string to a byte string.  Raises a ValueError if the string is "
@@ -64,7 +64,7 @@ Bases_Init(py::module& m)
             if (check && !is_base64(b64))
                 throw std::invalid_argument{"Value is not base64 encoded"};
 
-            return from_base64(b64);
+            return py::bytes{from_base64(b64)};
         },
         "b64"_a, "check"_a = true,
         "Decodes a base64-encoded string to a byte string, with or without padding.  Raises a "

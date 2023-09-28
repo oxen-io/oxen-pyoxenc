@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.3-1~ubuntu2310) mantic; urgency=medium
+
+  * rebuild for mantic
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 28 Sep 2023 10:22:51 -0300
+
 oxen-pyoxenc (1.0.3-1~ubuntu2304) lunar; urgency=medium
 
   * Fix from_base32z/64 trying to return a str

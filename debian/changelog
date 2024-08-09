@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.4-1~ubuntu2404) noble; urgency=medium
+
+  * require C++20 for building
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 08 Aug 2024 22:31:20 -0300
+
 oxen-pyoxenc (1.0.3-1~ubuntu2404) noble; urgency=medium
 
   * Rebuild for noble

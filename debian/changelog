@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.4-1~deb13) trixie; urgency=medium
+
+  * require C++20 for building
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 08 Aug 2024 22:28:30 -0300
+
 oxen-pyoxenc (1.0.3-1~deb13) trixie; urgency=medium
 
   * trixie deb

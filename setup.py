@@ -3,7 +3,7 @@ from setuptools import setup
 # Available at setup time due to pyproject.toml
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 # Note:
 #   Sort input source files if you glob sources to ensure bit-for-bit
@@ -13,7 +13,7 @@ ext_modules = [
     Pybind11Extension(
         "oxenc",
         ["src/bases.cpp", "src/bencode.cpp", "src/module.cpp"],
-        cxx_std=17,
+        cxx_std=20,
     ),
 ]
 

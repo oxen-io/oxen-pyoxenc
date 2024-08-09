@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.3-1~ubuntu2404) noble; urgency=medium
+
+  * Rebuild for noble
+
+ -- Jason Rhinelander <jason@imaginary.ca>  Thu, 08 Aug 2024 21:21:21 -0300
+
 oxen-pyoxenc (1.0.3-1~ubuntu2310) mantic; urgency=medium
 
   * rebuild for mantic

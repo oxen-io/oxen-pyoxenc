@@ -4,6 +4,7 @@ Maintainer: Jason Rhinelander <jason@oxen.io>
 Build-Depends:
     debhelper-compat (= 11),
     liboxenc-dev,
+    g++-10,
     pybind11-dev,
     python3-pybind11,
     python3-setuptools,

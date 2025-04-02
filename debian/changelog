@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.4-1+1) sid; urgency=medium
+
+  * Rebuild for sid python3 upgrade
+
+ -- Jason Rhinelander <jason@session.foundation>  Wed, 02 Apr 2025 18:11:22 -0300
+
 oxen-pyoxenc (1.0.4-1) sid; urgency=medium
 
   * require C++20 for building

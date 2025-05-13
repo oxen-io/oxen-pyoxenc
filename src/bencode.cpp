@@ -45,7 +45,7 @@ handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_poli
                 else if constexpr (std::same_as<T, std::string_view>)
                     return py::bytes{v.data(), v.size()}.release();
                 else if constexpr (std::same_as<T, uint64_t> || std::same_as<T, int64_t>)
-                    return py::int_{v};
+                    return py::int_{v}.release();
                 else if constexpr (std::same_as<T, oxenc::bt_list>) {
                     py::list l;
                     for (auto& item : v)

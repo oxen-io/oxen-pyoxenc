@@ -1,0 +1,21 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 13 May 2025 15:31:17 -0300
+Subject: gcc-10 variant workaround
+
+---
+ src/bencode.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/bencode.cpp b/src/bencode.cpp
+index 35ea8d3..f085c89 100644
+--- a/src/bencode.cpp
++++ b/src/bencode.cpp
+@@ -59,7 +59,7 @@ handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_poli
+                     return d.release();
+                 }
+             },
+-            std::move(val));
++            std::move(static_cast<oxenc::bt_variant&>(val)));
+ }
+ 
+ } // namespace pybind11::detail

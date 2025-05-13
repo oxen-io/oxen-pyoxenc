@@ -1,3 +1,11 @@
+oxen-pyoxenc (1.0.6-1~ubuntu2004) focal; urgency=medium
+
+  * gcc-10 variant workaround
+  * drop focal armhf
+  * fix the fix
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 19:28:00 -0300
+
 oxen-pyoxenc (1.0.5-1~ubuntu2004) focal; urgency=medium
 
   * use gcc 10 on focal

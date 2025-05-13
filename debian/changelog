@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.6-1) sid; urgency=medium
+
+  * fix the fix
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 19:23:51 -0300
+
 oxen-pyoxenc (1.0.5-1) sid; urgency=medium
 
   * Fix broken negative integer deserialization

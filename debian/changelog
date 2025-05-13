@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.5-1~deb13) trixie; urgency=medium
+
+  * Fix broken negative integer deserialization
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 15:17:01 -0300
+
 oxen-pyoxenc (1.0.4-1~deb13+1) trixie; urgency=medium
 
   * Trixie rebuild for updated python3

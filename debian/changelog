@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.5-1~ubuntu2204) jammy; urgency=medium
+
+  * update deprecated ci name
+  * Fix broken negative integer deserialization
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 15:17:14 -0300
+
 oxen-pyoxenc (1.0.4-1~ubuntu2204) jammy; urgency=medium
 
   * require C++20 for building

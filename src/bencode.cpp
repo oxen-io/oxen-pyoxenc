@@ -38,25 +38,28 @@ bool type_caster<oxenc::bt_value>::load(handle src, bool conv) {
 }
 
 handle type_caster<oxenc::bt_value>::cast(oxenc::bt_value val, return_value_policy rvp, handle /*parent*/) {
-    if (auto* str = std::get_if<std::string>(&val))
-        return py::bytes{*str}.release();
-    if (auto* sv = std::get_if<std::string_view>(&val))
-        return py::bytes{sv->data(), sv->size()}.release();
-    if (auto* u64 = std::get_if<uint64_t>(&val))
-        return py::int_{*u64}.release();
-    if (auto* list = std::get_if<oxenc::bt_list>(&val)) {
-        py::list l;
-        for (auto& item : *list)
-            l.append(std::move(item));
-        return l.release();
-    }
-    if (auto* dict = std::get_if<oxenc::bt_dict>(&val)) {
-        py::dict d;
-        for (auto& [key, value] : *dict)
-            d[py::bytes{key}] = std::move(value);
-        return d.release();
-    }
-    return py::none{}.release();
+    return std::visit(
+            []<typename T>(T&& v) -> handle {
+                if constexpr (std::same_as<T, std::string>)
+                    return py::bytes{std::move(v)}.release();
+                else if constexpr (std::same_as<T, std::string_view>)
+                    return py::bytes{v.data(), v.size()}.release();
+                else if constexpr (std::same_as<T, uint64_t> || std::same_as<T, int64_t>)
+                    return py::int_{v};
+                else if constexpr (std::same_as<T, oxenc::bt_list>) {
+                    py::list l;
+                    for (auto& item : v)
+                        l.append(std::move(item));
+                    return l.release();
+                } else {
+                    static_assert(std::same_as<T, oxenc::bt_dict>);
+                    py::dict d;
+                    for (auto& [key, value] : v)
+                        d[py::bytes{key}] = std::move(value);
+                    return d.release();
+                }
+            },
+            std::move(val));
 }
 
 } // namespace pybind11::detail

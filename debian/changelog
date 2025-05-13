@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.5-1) sid; urgency=medium
+
+  * Fix broken negative integer deserialization
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 15:16:44 -0300
+
 oxen-pyoxenc (1.0.4-1+1) sid; urgency=medium
 
   * Rebuild for sid python3 upgrade

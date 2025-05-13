@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.6-1~deb12) bookworm; urgency=medium
+
+  * fix the fix
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 19:27:50 -0300
+
 oxen-pyoxenc (1.0.5-1~deb12) bookworm; urgency=medium
 
   * update deprecated ci name

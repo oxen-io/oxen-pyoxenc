@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.4-1~ubuntu2410) oracular; urgency=medium
+
+  * Oracular deb
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 15:13:16 -0300
+
 oxen-pyoxenc (1.0.4-1~ubuntu2404) noble; urgency=medium
 
   * require C++20 for building

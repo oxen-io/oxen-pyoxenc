@@ -1,3 +1,10 @@
+oxen-pyoxenc (1.0.6-1~ubuntu2504) plucky; urgency=medium
+
+  * drop unsupported armhf build
+  * fix the fix
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 19:28:27 -0300
+
 oxen-pyoxenc (1.0.5-1~ubuntu2504) plucky; urgency=medium
 
   * Fix broken negative integer deserialization

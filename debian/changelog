@@ -1,3 +1,11 @@
+oxen-pyoxenc (1.0.5-1~ubuntu2004) focal; urgency=medium
+
+  * use gcc 10 on focal
+  * update deprecated ci name
+  * Fix broken negative integer deserialization
+
+ -- Jason Rhinelander <jason@session.foundation>  Tue, 13 May 2025 15:17:12 -0300
+
 oxen-pyoxenc (1.0.4-1~ubuntu2004) focal; urgency=medium
 
   * require C++20 for building

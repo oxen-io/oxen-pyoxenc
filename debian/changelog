@@ -1,3 +1,9 @@
+oxen-pyoxenc (1.0.6-1~deb14) forky; urgency=medium
+
+  * forky deb
+
+ -- Jason Rhinelander <jason@session.foundation>  Wed, 27 Aug 2025 14:50:34 -0300
+
 oxen-pyoxenc (1.0.6-1) sid; urgency=medium
 
   * fix the fix
